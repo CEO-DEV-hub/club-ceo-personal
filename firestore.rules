@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // Default-deny: By default, no one can read or write to any collection.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Allow creation of reservations but validate the input data.
+    match /reservations/{reservationId} {
+      allow create: if request.resource.data.name is string && request.resource.data.name.size() < 100
+                      && request.resource.data.email is string && request.resource.data.email.size() < 100
+                      && request.resource.data.phone is string && request.resource.data.phone.size() < 20
+                      && request.resource.data.guests is string && request.resource.data.guests.size() < 10
+                      && request.resource.data.date is string && request.resource.data.date.size() < 20
+                      && request.resource.data.time is string && request.resource.data.time.size() < 20
+                      && request.resource.data.totalAmount is number
+                      && request.resource.data.paymentReference is string && request.resource.data.paymentReference.size() < 100
+                      && request.resource.data.status == 'confirmed'
+                      && request.resource.data.createdAt == request.time;
+                      
+      allow read, update, delete: if false;
+    }
+  }
+}
