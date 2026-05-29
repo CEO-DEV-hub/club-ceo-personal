@@ -79,12 +79,6 @@ export default function Experience() {
                   ))}
                 </ul>
                 
-                <motion.button
-                  whileHover={{ x: 5 }}
-                  className={`mt-10 text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-${exp.color}`}
-                >
-                  Learn More <span>→</span>
-                </motion.button>
               </div>
 
               {/* Border Animation */}

@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-
+import Reservation from './components/Reservation';
 export default function App() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { scrollYProgress } = useScroll();
@@ -44,6 +44,7 @@ export default function App() {
       
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/reserve" element={<Reservation />} />
       </Routes>
 
       <Footer />

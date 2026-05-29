@@ -4,7 +4,6 @@ import Experience from '../components/Experience';
 import Gallery from '../components/Gallery';
 import Reviews from '../components/Reviews';
 import Location from '../components/Location';
-import Reservation from '../components/Reservation';
 
 export default function Home() {
   return (
@@ -24,7 +23,6 @@ export default function Home() {
         <Gallery />
         <Reviews />
         <Location />
-        <Reservation />
       </div>
     </main>
   );

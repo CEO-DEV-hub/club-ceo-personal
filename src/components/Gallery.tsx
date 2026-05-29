@@ -3,8 +3,8 @@ import { motion } from 'motion/react';
 export default function Gallery() {
   const images = [
     { url: 'https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&q=80&w=800', title: 'Electric Vibes', size: 'large' },
-    { url: 'https://images.unsplash.com/photo-1574094939582-8d16edad337a?auto=format&fit=crop&q=80&w=800', title: 'VIP Seating', size: 'small' },
-    { url: 'https://images.unsplash.com/photo-1514525253361-bee8718a74a2?auto=format&fit=crop&q=80&w=800', title: 'Main Stage', size: 'small' },
+    { url: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&q=80&w=800', title: 'VIP Seating', size: 'small' },
+    { url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', title: 'Main Stage', size: 'small' },
     { url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800', title: 'The DJ', size: 'medium' },
     { url: 'https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?auto=format&fit=crop&q=80&w=800', title: 'Signature Drinks', size: 'medium' },
     { url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=800', title: 'Crowd Energy', size: 'large' },

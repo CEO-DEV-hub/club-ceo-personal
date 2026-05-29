@@ -37,7 +37,7 @@ export default function Hero() {
 
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             <motion.a
-              href="#reserve"
+              href="/reserve"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-neon-purple text-white rounded-full font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(138,43,226,0.4)] hover:shadow-[0_0_40px_rgba(138,43,226,0.6)] transition-all flex items-center gap-2"
@@ -74,7 +74,6 @@ export default function Hero() {
         transition={{ delay: 1, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 text-soft-white/30 flex flex-col items-center gap-2"
       >
-        <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
