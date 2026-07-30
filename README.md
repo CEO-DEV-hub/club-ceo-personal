@@ -1,6 +1,6 @@
 # Club CEO - Premium Nightlife Reservation System
 
-**Live Demo:** [https://club-ceo-personal.vercel.app](https://club-ceo-personal.vercel.app)
+**Live Demo:** [https://club-ceo-personal.onrender.com](https://club-ceo-personal.onrender.com)
 
 ## 🌟 Overview
 Club CEO is a modern website designed for a premium club in Hij, Delta State. It provides a seamless user experience for customers to browse luxury drinks and soup menu, calculate order totals, and secure table reservations with integrated payment processing.
