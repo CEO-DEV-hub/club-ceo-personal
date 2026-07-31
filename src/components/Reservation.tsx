@@ -6,7 +6,11 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 // ✅ ONLY import db from firebase.ts (Bouncer is officially gone)
 import { db } from '../firebase'; 
 
-const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder';
+// Removed the test placeholder to prevent using it in prod; throw if missing
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+if (!PAYSTACK_PUBLIC_KEY && import.meta.env.PROD) {
+  console.error("VITE_PAYSTACK_PUBLIC_KEY is not defined in production.");
+}
 
 const MENU_ITEMS = [
   { id: 'hennessy', name: 'Hennessy', price: 150000 },
@@ -51,13 +55,16 @@ export default function Reservation() {
   const grandTotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
 
   const handleAddItem = () => {
+    // Basic bounds checking for quantity
+    const quantity = Math.max(1, Math.min(99, itemQuantity));
+    
     const item = MENU_ITEMS.find(i => i.id === selectedItemId);
     if (!item) return;
 
     const existingItemIndex = orderItems.findIndex(i => i.id === selectedItemId);
     if (existingItemIndex > -1) {
       const updatedItems = [...orderItems];
-      updatedItems[existingItemIndex].quantity += itemQuantity;
+      updatedItems[existingItemIndex].quantity += quantity;
       updatedItems[existingItemIndex].subtotal = updatedItems[existingItemIndex].quantity * item.price;
       setOrderItems(updatedItems);
     } else {
@@ -65,8 +72,8 @@ export default function Reservation() {
         id: item.id,
         name: item.name,
         price: item.price,
-        quantity: itemQuantity,
-        subtotal: itemQuantity * item.price
+        quantity: quantity,
+        subtotal: quantity * item.price
       }]);
     }
     setItemQuantity(1); // Reset to 1 after adding
@@ -78,6 +85,21 @@ export default function Reservation() {
 
   const handleNextStep = (e: FormEvent) => {
     e.preventDefault();
+    
+    // Client-side validation
+    if (formData.name.trim().length === 0 || formData.name.length > 100) {
+      alert('Please enter a valid name (up to 100 characters).');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || formData.email.length > 100) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    if (!/^[+]?[\d\s-]{10,20}$/.test(formData.phone)) {
+      alert('Please enter a valid phone number.');
+      return;
+    }
+
     if (orderItems.length === 0) {
       alert('Please add at least one item to your order.');
       return;
@@ -103,20 +125,29 @@ export default function Reservation() {
       setStep('details');
       setTimeout(() => setIsSuccess(false), 8000);
     } catch (error) {
-      console.error("Error saving reservation:", error);
-      alert('Error saving reservation. Reference: ' + reference);
+      // Don't leak exact reference in user alert, log it securely instead
+      console.error("Error saving reservation to database."); 
+      alert('There was an error saving your reservation. Please contact support.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handlePaystackPayment = () => {
+    if (!PAYSTACK_PUBLIC_KEY) {
+      alert('Payment system is not properly configured.');
+      return;
+    }
+    
+    // Generate secure random UUID instead of Math.random
+    const ref = 'CEO-' + crypto.randomUUID();
+
     const handler = (window as any).PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: formData.email,
       amount: grandTotal * 100, // Kobo conversion
       currency: 'NGN',
-      ref: 'CEO-' + Math.floor((Math.random() * 1000000000) + 1),
+      ref: ref,
       callback: (response: any) => saveReservation(response.reference),
       onClose: () => alert('Transaction cancelled.'),
     });
@@ -144,9 +175,9 @@ export default function Reservation() {
                 <motion.form key="details" onSubmit={handleNextStep} className="grid lg:grid-cols-5 gap-8">
                   <div className="lg:col-span-3 space-y-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      <input type="text" required placeholder="Full Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
-                      <input type="email" required placeholder="Email Address" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
-                      <input type="tel" required placeholder="Phone Number" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
+                      <input type="text" maxLength={100} required placeholder="Full Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
+                      <input type="email" maxLength={100} required placeholder="Email Address" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
+                      <input type="tel" maxLength={20} required placeholder="Phone Number" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent"/>
                       
                       {/* ✅ GUEST DROPDOWN RESTORED 1 to 20+ */}
                       <select value={formData.guests} onChange={(e) => setFormData({...formData, guests: e.target.value})} className="bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-gold-accent">
@@ -168,7 +199,7 @@ export default function Reservation() {
                        </select>
 
                        {/* ✅ QUANTITY INPUT RESTORED */}
-                       <input type="number" min="1" value={itemQuantity} onChange={(e) => setItemQuantity(parseInt(e.target.value) || 1)} className="w-full sm:w-20 bg-white/5 border border-white/10 p-3 rounded-xl text-white text-center"/>
+                       <input type="number" min="1" max="99" value={itemQuantity} onChange={(e) => setItemQuantity(parseInt(e.target.value) || 1)} className="w-full sm:w-20 bg-white/5 border border-white/10 p-3 rounded-xl text-white text-center"/>
                        
                        <button type="button" onClick={handleAddItem} className="bg-gold-accent text-black font-black px-6 py-3 rounded-xl hover:bg-white transition-all">+ ADD</button>
                      </div>

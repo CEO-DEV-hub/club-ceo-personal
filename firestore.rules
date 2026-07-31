@@ -9,17 +9,21 @@ service cloud.firestore {
     }
 
     // Allow creation of reservations but validate the input data.
+    // Note: Rate limiting must be implemented at the application or edge layer.
     match /reservations/{reservationId} {
-      allow create: if request.resource.data.name is string && request.resource.data.name.size() < 100
-                      && request.resource.data.email is string && request.resource.data.email.size() < 100
-                      && request.resource.data.phone is string && request.resource.data.phone.size() < 20
-                      && request.resource.data.guests is string && request.resource.data.guests.size() < 10
-                      && request.resource.data.date is string && request.resource.data.date.size() < 20
-                      && request.resource.data.time is string && request.resource.data.time.size() < 20
-                      && request.resource.data.totalAmount is number
-                      && request.resource.data.paymentReference is string && request.resource.data.paymentReference.size() < 100
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'phone', 'guests', 'date', 'time', 'totalAmount', 'paymentReference', 'status', 'createdAt', 'orderItems'])
+                      && request.resource.data.keys().size() == 11
+                      && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+                      && request.resource.data.email is string && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$') && request.resource.data.email.size() <= 100
+                      && request.resource.data.phone is string && request.resource.data.phone.matches('^[+]?[\\d\\s-]{10,20}$')
+                      && request.resource.data.guests is string && request.resource.data.guests.size() > 0 && request.resource.data.guests.size() <= 10
+                      && request.resource.data.date is string && request.resource.data.date.size() > 0 && request.resource.data.date.size() <= 20
+                      && request.resource.data.time is string && request.resource.data.time.size() > 0 && request.resource.data.time.size() <= 20
+                      && request.resource.data.totalAmount is number && request.resource.data.totalAmount >= 0
+                      && request.resource.data.paymentReference is string && request.resource.data.paymentReference.size() > 0 && request.resource.data.paymentReference.size() <= 100
                       && request.resource.data.status == 'confirmed'
-                      && request.resource.data.createdAt == request.time;
+                      && request.resource.data.createdAt == request.time
+                      && request.resource.data.orderItems is list;
                       
       allow read, update, delete: if false;
     }
