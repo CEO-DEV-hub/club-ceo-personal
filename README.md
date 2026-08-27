@@ -1,6 +1,5 @@
 # Club CEO - Premium Nightlife Reservation System
 
-**Live Demo:** [https://club-ceo-personal.onrender.com](https://club-ceo-personal.onrender.com)
 
 ## 🌟 Overview
 Club CEO is a modern website designed for a premium club in Hij, Delta State. It provides a seamless user experience for customers to browse luxury drinks and soup menu, calculate order totals, and secure table reservations with integrated payment processing.
@@ -10,12 +9,11 @@ Club CEO is a modern website designed for a premium club in Hij, Delta State. It
 * **Secure Payment Integration:** Integrated with **Paystack API** to handle high-value transactions securely.
 * **Real-time Database:** Powered by **Firebase Firestore** for instant order synchronization.
 * **Responsive Design:** Optimized for mobile and desktop, catering to the "premium nightlife" aesthetic.
-* **Security-First Architecture:** Implemented custom Firestore security rules and environment variable protection for API keys.
 
 ## 🛠️ Tech Stack
 * **Frontend:** React.js, Vite, Tailwind CSS, Typescript 
 * **Backend/BaaS:** Firebase (Firestore)
-* **Deployment:** Vercel (CI/CD via GitHub)
+* **Deployment:** Render
 * **Payments:** Paystack API
 
 
