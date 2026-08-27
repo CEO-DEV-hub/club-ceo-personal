@@ -18,15 +18,5 @@ Club CEO is a modern website designed for a premium club in Hij, Delta State. It
 * **Deployment:** Vercel (CI/CD via GitHub)
 * **Payments:** Paystack API
 
-## 🔒 Security Implementation
-To ensure data integrity, the project uses a "Write-Only" security model for the public:
-- Users can create reservations but cannot read, update, or delete existing entries.
-- All sensitive API keys are managed through Vercel Environment Variables, ensuring no secrets are exposed in the client-side code.
 
-## 📂 Project Structure
-- `/src`: Contains the React components and logic.
-- `/public`: Static assets including high-quality luxury brand imagery.
-- `firebase.js`: Configuration and initialization of the Firebase SDK.
 
----
-*Developed as a personal project by Okafor Emmanuel Chukwuemeka.*
